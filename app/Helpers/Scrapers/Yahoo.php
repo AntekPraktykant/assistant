@@ -4,6 +4,7 @@ namespace App\Helpers\Scrapers;
 
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class Yahoo implements IScraper
 {
@@ -64,11 +65,12 @@ class Yahoo implements IScraper
             $fileContents = file_get_contents($page);
 
             if ($fileContents === false) {
-                continue;
+                continue; // todo log error
             }
 
-            $data[$ticker]['earnings'] = $this->extractData('earnings', $fileContents);
-            $data[$ticker]['exdd'] = $this->extractData('exdd', $fileContents);
+            foreach (self::YAHOO_DEF as $key => $value) {
+                $data[$ticker][$key] = $this->extractData($key, $fileContents);
+            }
         }
 
         return $data;
