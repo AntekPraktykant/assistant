@@ -6,8 +6,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8626e08b-97b9-4d22-9eaf-a4c5ba9c9e48" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.env_remote" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
@@ -22,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="229" column="24" lean-forward="true" selection-start-line="229" selection-start-column="24" selection-end-line="229" selection-end-column="24" />
+            <state relative-caret-position="324">
+              <caret line="81" lean-forward="true" selection-start-line="81" selection-end-line="81" />
               <folding>
                 <element signature="e#40#54#0#PHP" expanded="true" />
               </folding>
@@ -34,14 +32,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="306">
-              <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
               <folding>
                 <element signature="e#7#389#0#PHP" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.htaccess">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="30" column="28" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -165,8 +172,8 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" />
         <option value="$PROJECT_DIR$/app/Console/Commands/ScrapDaily.php" />
         <option value="$PROJECT_DIR$/.env_remote" />
-        <option value="$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php" />
       </list>
     </option>
   </component>
@@ -406,18 +413,18 @@
       <workItem from="1567930316424" duration="30771000" />
       <workItem from="1568012236280" duration="29196000" />
       <workItem from="1568070035079" duration="806000" />
-      <workItem from="1568103722977" duration="5355000" />
+      <workItem from="1568103722977" duration="5848000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201723000" />
+    <option name="totallyTimeSpent" value="202216000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2062" height="1126" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18831168" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18831168" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -507,13 +514,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
           <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.htaccess">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="30" column="28" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
         </state>
       </provider>
     </entry>
@@ -815,22 +815,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php">
+    <entry file="file://$PROJECT_DIR$/.htaccess">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="229" column="24" lean-forward="true" selection-start-line="229" selection-start-column="24" selection-end-line="229" selection-end-column="24" />
-          <folding>
-            <element signature="e#40#54#0#PHP" expanded="true" />
-          </folding>
+        <state relative-caret-position="540">
+          <caret line="30" column="28" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
           <folding>
             <element signature="e#7#389#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="81" lean-forward="true" selection-start-line="81" selection-end-line="81" />
+          <folding>
+            <element signature="e#40#54#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>

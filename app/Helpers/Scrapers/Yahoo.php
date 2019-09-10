@@ -78,7 +78,7 @@ class Yahoo implements IScraper
 
             $start_post_page_load = microtime(true);
         $data = $this->extractData($fileContents);
-        $price = $this->getPrice($fileContents);
+//        $price = $this->getPrice($fileContents);
 
 //            try {
 //                $data = $this->extractData($fileContents);
