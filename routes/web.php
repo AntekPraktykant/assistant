@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test', 'HomeController@index');
+Route::get('/assistant/test', 'HomeController@index');
 Route::get('/test2', 'TransactionController@index');
 
 Route::match(['get', 'post'], '/transactions', 'TransactionController@index')->name('showtransactions');

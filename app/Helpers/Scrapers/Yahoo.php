@@ -78,6 +78,7 @@ class Yahoo implements IScraper
 
             $start_post_page_load = microtime(true);
         $data = $this->extractData($fileContents);
+        $price = $this->getPrice($fileContents);
 
 //            try {
 //                $data = $this->extractData($fileContents);
@@ -208,16 +209,6 @@ class Yahoo implements IScraper
         $input['Forward Dividend'] = empty($dividend[0]) ? null : $dividend[0];
         $input['Yield'] = isset($dividend[1]) ? $dividend[1] : null;
 
-//        if (strtoupper($input['Earnings Date']) !== 'N/A' && !empty($input['Earnings Date'])) {
-//            $earnings = explode('-', $input['Earnings Date']);
-//            $input['Earnings Date 1'] = Carbon::create($earnings[0]);
-//            if (count($earnings) > 1) {
-//                $input['Earnings Date 2'] = Carbon::create($earnings[1]);
-//            } else {
-//                $input['Earnings Date 2'] = null;
-//            }
-//        }
-
         $input = array_merge($input, $this->splitEntry($input, '52 Week Range'));
         $input = array_merge($input, $this->splitEntry($input, "Day's Range"));
         $input = array_merge($input, $this->splitEntry($input, 'Earnings Date'));
@@ -227,6 +218,18 @@ class Yahoo implements IScraper
         unset($input['Earnings Date']);
 
         return $input;
+    }
+
+    private function getPrice(string $pageContents) : array
+    {
+
+        $htmlAnchor = 'class="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)" data-reactid="34">';
+        $regex = "@^[0-9]*[.][0-9]*@";
+
+        $data = explode($htmlAnchor, $pageContents)[1];
+        $data = explode()[0];
+        dd($data);
+
     }
 
     private function splitEntry($array, $indexName, $delimiter = '-')
