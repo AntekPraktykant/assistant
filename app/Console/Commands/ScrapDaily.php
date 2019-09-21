@@ -49,7 +49,8 @@ class ScrapDaily extends Command
      */
     public function handle($sleep = 0.5)
     {
-        $allStocks = Skrocona::all()->pluck('TICKER')->toArray();
+        $last = skrocona::max('date');
+        $allStocks = Skrocona::where('date', '=', $last)->pluck('TICKER')->toArray();
         $statuses = [];
 
         $execute = true;

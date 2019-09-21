@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8626e08b-97b9-4d22-9eaf-a4c5ba9c9e48" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Console/Commands/ScrapCCC.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Helpers/Scrapers/DividendChampions.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/YahooDaily.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/asystent.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/asystent.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Console/Commands/ScrapDaily.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Commands/ScrapDaily.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Helpers/Scrapers/Yahoo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Skrocona.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Skrocona.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,8 +35,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/Console/Commands/ScrapDaily.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="193">
-              <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
+            <state relative-caret-position="211">
+              <caret line="51" column="16" selection-start-line="51" selection-start-column="16" selection-end-line="51" selection-end-column="16" />
               <folding>
                 <element signature="e#40#53#0#PHP" expanded="true" />
               </folding>
@@ -497,15 +485,16 @@
       <workItem from="1569070212268" duration="2065000" />
       <workItem from="1569099437563" duration="1376000" />
       <workItem from="1569100951614" duration="152000" />
-      <workItem from="1569101127404" duration="1155000" />
+      <workItem from="1569101127404" duration="1730000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="270801000" />
+    <option name="totallyTimeSpent" value="271376000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-2567" y="-221" width="2062" height="1126" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13786213" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -520,7 +509,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32997987" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.4995005" visible="true" weight="0.20623742" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.4995005" weight="0.6609658" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5004995" side_tool="true" weight="0.85915494" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -954,8 +943,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Console/Commands/ScrapDaily.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
+        <state relative-caret-position="211">
+          <caret line="51" column="16" selection-start-line="51" selection-start-column="16" selection-end-line="51" selection-end-column="16" />
           <folding>
             <element signature="e#40#53#0#PHP" expanded="true" />
           </folding>
