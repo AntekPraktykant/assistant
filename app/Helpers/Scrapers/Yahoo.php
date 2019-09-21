@@ -7,43 +7,12 @@ use Carbon\Carbon;
 
 class Yahoo implements IScraper
 {
-    private const YAHOO_DEF = [
-        'exdd' => [
-            'htmlAnchor' => 'data-test="EX_DIVIDEND_DATE-value"',
-            'regex' => "@[0-9]{4}([-][0-9]{1,2}){2}@",
-        ],
-        'earnings' => [
-            'htmlAnchor' => 'data-test="EARNINGS_DATE-value"',
-            'regex' => "@[a-zA-Z]{3}\s[0-9]{1,2}[,]\s[0-9]{4}@",
-        ],
-        'pe' => [
-            'htmlAnchor' => '" data-reactid="93">',
-            'regex' => "@^[0-9]{1,}[.][0-9]{1,}@",
-        ],
-        'beta' => [
-            'htmlAnchor' => '" data-reactid="88">',
-            'regex' => "@^[-]{0,1}[0-9]{1,}[.][0-9]{1,}@",
-        ],
-        'mktcap' => [
-            'htmlAnchor' => '" data-reactid="83">',
-/*
- * dlaczego przy scrapowaniu MA nie dzieli tablicy po "MARKET_CAP-value"> ??
- */
-//            'htmlAnchor' => '"MARKET_CAP-value">', //data-test="MARKET_CAP-value"><span class="Trsdu(0.3s) ">
-            'regex' => "@^[0-9]{1,}[.][0-9]{1,}[A-Z]@",
-        ],
-        'price' => [
-            'htmlAnchor' => 'class="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)" data-reactid="34">',
-            'regex' => "@^[0-9]*[.][0-9]*@",
-        ]
-    ];
-
     private const URL = 'https://finance.yahoo.com/quote/';
 
     private $ticker = null;
     private $maxAttempts = null;
     private $attempt = 1;
-    private $messages = "";
+    private $messages = [];
 
     public function __construct(string $ticker, $maxAttempts = 5)
     {
@@ -56,43 +25,39 @@ class Yahoo implements IScraper
      */
     public function getData() : array
     {
-        $data = [];
+        $result = null;
 
-//        foreach ($this->ticker as $ticker) {
+        while ($this->attempt < $this->maxAttempts && ! $result) {
+            $this->attempt++;
+            try {
+                $result = $this->_getData();
+            } catch (Exception $e) {
+                set_time_limit(30);
+                $this->messages[$this->attempt] = $e->getMessage();
+                sleep(25);
+                set_time_limit(30);
+            } finally {
+                print_r($this->messages);
+            }
+        }
+        return $result;
+    }
 
-            print_r('Scraping ' . $this->ticker . PHP_EOL);
+    public function getMessages() : array
+    {
+        return $this->messages;
+    }
 
-            $start_pre_page_load = microtime(true);
+    private function _getData()
+    {
+        print_r('Scraping ' . $this->ticker . PHP_EOL);
 
         $fileContents = $this->downloadPage();
 
-//            $page = self::URL . $ticker;
-//            try {
-//                $fileContents = $this->downloadPage($this->ticker); //file_get_contents($page);
-//            } catch (ErrorException $e) {
-//                sleep(25);
-//                set_time_limit(30);
-//                $fileContents = $this->downloadPage($this->ticker); //file_get_contents($page);
-//                print_r("Page could not be loaded for $this->ticker");
-//            }
-
-            $start_post_page_load = microtime(true);
         $data = $this->extractData($fileContents);
-//        $price = $this->getPrice($fileContents);
+        $price = $this->getPrice($fileContents);
 
-//            try {
-//                $data = $this->extractData($fileContents);
-//            } catch (Exception $e) {
-////                sleep(25);
-////                set_time_limit(30);
-////                $data = $this->extractData($fileContents);
-//                $this->retry("Scrapp was stopped on getData method for $this->ticker");
-//            }
-
-            print_r('Whole time ' . $time_elapsed_secs_pre = microtime(true) - $start_pre_page_load . PHP_EOL);
-            print_r('Scrapping time ' . $time_elapsed_secs_post = microtime(true) - $start_post_page_load . PHP_EOL);
-
-        return $this->formatData($data);
+        return $this->formatData(array_merge($data, $price));
     }
 
     private function extractData($pageContents)
@@ -121,10 +86,6 @@ class Yahoo implements IScraper
         $page = self::URL . $this->ticker;
         $fileContents = file_get_contents($page);
 
-        if ($fileContents  === false) {
-            $this->retry("download page failed");
-        }
-
         return $fileContents;
     }
 
@@ -135,10 +96,6 @@ class Yahoo implements IScraper
          */
 
         $table1 = explode('<table', $pageContent);
-
-        if (count($table1) < 3) {
-            $this->retry('It was not possible to extract two tables');
-        }
 
         $table1 = explode('</table', $table1[1])[0];
         $table2 = explode('</table', explode('<table', $pageContent)[2])[0];
@@ -222,19 +179,19 @@ class Yahoo implements IScraper
 
     private function getPrice(string $pageContents) : array
     {
-
         $htmlAnchor = 'class="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)" data-reactid="34">';
-        $regex = "@^[0-9]*[.][0-9]*@";
 
         $data = explode($htmlAnchor, $pageContents)[1];
-        $data = explode()[0];
-        dd($data);
+        $data = explode('</', $data)[0];
 
+        $output["Last price"] = $this->cleanData($data);
+        return $output;
     }
 
     private function splitEntry($array, $indexName, $delimiter = '-')
     {
-        $output= [];
+        $output[$indexName . " 1"] = null;
+        $output[$indexName . " 2"] = null;
         if (strtoupper($array[$indexName]) !== 'N/A' && !empty($array[$indexName])) {
             $temp = explode($delimiter, $array[$indexName]);
             $output[$indexName . " 1"] = rtrim(ltrim($temp[0]));

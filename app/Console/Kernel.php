@@ -26,6 +26,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->command('scrap:daily')->everyMinute();
+        $schedule->command('scrap:daily')->weekdays()->at('22:15');
+        $schedule->command('scrap:ccc')->monthlyOn(1, '22:15');
     }
 
     /**
