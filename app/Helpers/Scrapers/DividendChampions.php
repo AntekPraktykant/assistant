@@ -89,13 +89,11 @@ class DividendChampions implements IScraper
         $output = [];
         $row_number = 0;
         $execute = 0;
+
         foreach ($allCCC as $row) {
 
-            /*
-             * skip all rows after row with first empty row after row with Name
-             */
-            if (strpos($row[0], ' ') && $execute === 1) {
-                $execute += 1;
+            if ($row[0] == '' && $execute === 1) {
+                break;
             }
 
             if ($execute === 1) {
