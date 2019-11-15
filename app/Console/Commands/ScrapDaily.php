@@ -2,22 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Beta;
-use App\Earnings;
-use App\ExDividend;
-use App\Helpers\Scrapers\DividendChampions;
 use App\Helpers\Scrapers\Yahoo;
-use App\MarketCap;
-use App\PERatio;
 use App\Skrocona;
-use App\StockPrice;
 use App\YahooDaily;
+use App\YahooPages;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use SimpleXLSX;
 
 class ScrapDaily extends Command
 {
+    const CCC_STOCKS_TABLE = 'skrocona';
+    private $noOfScraps;
     /**
      * The name and signature of the console command.
      *
@@ -47,20 +42,21 @@ class ScrapDaily extends Command
      *
      * @return mixed
      */
-    public function handle($sleep = 0.5)
+    public function handle($sleep = 0.5, $first = 'A')
     {
         $last = skrocona::max('date');
         $allStocks = Skrocona::where('date', '=', $last)->pluck('TICKER')->toArray();
+        $noOfScraps = count($allStocks);
         $statuses = [];
 
-        $execute = true;
+        $execute = false;
 
         foreach ($allStocks as $stock) {
 
-//            if ($stock === 'TCF') {
-//                $execute = true;
-//            }
-//            elseif ($stock === 'MAA')
+            if ($stock === $first) {
+                $execute = true;
+            }
+//            elseif ($stock === 'DHIL')
 //            {
 //                $execute = false;
 //                break;
@@ -72,22 +68,27 @@ class ScrapDaily extends Command
                 }
                 print_r(PHP_EOL . '----------------------------------' . $stock . ' -----------------------------------------' . PHP_EOL);
                 $yahoo = new Yahoo($stock);
-                $stockData = $yahoo->getData();
-                $msg = $yahoo->getMessages();
 
-                if (count($msg) > 1) {
-                    $statuses[$stock] = $msg;
+                try {
+                    $stockData = $yahoo->getData();
+                } catch (\Exception $e) {
+                    sleep(10);
+                    set_time_limit(30);
+                    $this->handle(0.5, $stock);
                 }
-                $this->saveToDb($stockData, $stock);
+
+                $this->saveToDb($yahoo, $stock);
             }
         }
+
         print_r(PHP_EOL);
         print_r($statuses);
     }
 
-    private function saveToDb($values, $ticker)
+    private function saveToDb($yahoo, $ticker)
     {
-        $today = Carbon::today('Europe/Warsaw');
+        $values = $yahoo->getStockData();
+        $today = Carbon::today('America/New_York');
 
         $yahooDaily = new YahooDaily();
 
@@ -104,74 +105,25 @@ class ScrapDaily extends Command
         $yahooDaily->day_max = $values["Day's Range 2"];
         $yahooDaily->year_min = $values["52 Week Range 1"];
         $yahooDaily->year_max = $values["52 Week Range 2"];
-
-//        dd($yahooDaily);
-
-//        $exdd = new ExDividend();
-//        $earnings = new Earnings();
-//        $beta = new Beta();
-//        $peratio = new PERatio();
-//        $stockprice = new StockPrice();
-//        $mktcap = new MarketCap();
-//
-//        $exdd->date = $today;
-//        $exdd->ex_date = $values['Ex-Dividend Date']; //isset($values['Ex-Dividend Date'][0]) ? $values['Ex-Dividend Date'][0] : null;
-//        $exdd->ticker = $ticker;
-//
-//        $earnings->date = $today;
-//        $earnings->earnings_1 = $values['Earnings Date 1']; //isset($values['Earnings Date 1'][0]) ? $values['earnings'][0] : null;
-//        $earnings->earnings_2 = $values['Earnings Date 2']; //isset($values['earnings'][1]) ? $values['earnings'][1] : null;
-//        $earnings->ticker = $ticker;
-//
-//        $beta->date = $today;
-//        $beta->beta = $values['Beta 3Y Monthly'];//isset($values['beta'][0]) ? $values['beta'][0] : null;
-//        $beta->ticker = $ticker;
-//
-//        $peratio->date = $today;
-//        $peratio->pe = $values['PE Ratio TTM']; //isset($values['pe'][0]) ? $values['pe'][0] : null;
-//        $peratio->ticker = $ticker;
-//
-//        $stockprice->date = $today;
-//        $stockprice->close = $values['Last price'];
-//        $stockprice->day_min = $values["Day's Range 1"];
-//        $stockprice->day_max = $values["Day's Range 2"];
-//        $stockprice->year_min = $values["52 Week Range 1"];
-//        $stockprice->year_max = $values["52 Week Range 2"];
-//        $stockprice->ticker = $ticker;
-//
-//        $mktcap->date = $today;
-//        $mktcap->mktcap = $values['Market Cap']; //isset($values['mktcap'][0]) ? $values['mktcap'][0] : null;
-//        $mktcap->ticker = $ticker;
+        $yahooDaily->eps_ttm = $values["EPS TTM"];
+        $yahooDaily->analyst_1y_price_est = $values["1y Target Est"];
+        $yahooDaily->forward_dividend = $values["Forward Dividend"];
+        $yahooDaily->yield = empty($x= str_replace('%', '', $values["Yield"])) ? null : $x;
 
         if ($yahooDaily->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
             print_r('Saving exdd ' . $ticker . ": $yahooDaily->ex_date" . PHP_EOL);
             $yahooDaily->save();
         }
 
-//        if ($earnings->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
-//            print_r('Saving earnings ' . $ticker . ": $earnings->earnings_1 - $earnings->earnings_2" . PHP_EOL);
-//            $earnings->save();
-//        }
-//
-//        if ($beta->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
-//            print_r('Saving beta ' . $ticker . ": $beta->beta" . PHP_EOL);
-//            $beta->save();
-//        }
-//
-//        if ($peratio->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
-//            print_r('Saving peratio ' . $ticker . ": $peratio->pe" . PHP_EOL);
-//            $peratio->save();
-//        }
-//
-//        if ($stockprice->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
-//            print_r('Saving price ' . $ticker . ": $stockprice->close" . PHP_EOL);
-//            $stockprice->save();
-//        }
-//
-//        if ($mktcap->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
-//            print_r('Saving mktcap ' . $ticker . ": $mktcap->mktcap" . PHP_EOL);
-//            $mktcap->save();
-//        }
+        $yahooPages = new YahooPages();
+        $yahooPages->date = $today;
+        $yahooPages->ticker = $ticker;
+        $yahooPages->page_contents = $yahoo->getPageContents();
+
+        if ($yahooPages->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
+            print_r('Saving page ' . $ticker . ": $yahooPages->ticker" . PHP_EOL);
+            $yahooPages->save();
+        }
 
         print_r(PHP_EOL . '==================================' . $ticker . ' complete =================================' . PHP_EOL);
     }

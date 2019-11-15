@@ -13,6 +13,8 @@ class Yahoo implements IScraper
     private $maxAttempts = null;
     private $attempt = 1;
     private $messages = [];
+    private $fileContents = null;
+    private $stockData = null;
 
     public function __construct(string $ticker, $maxAttempts = 5)
     {
@@ -36,7 +38,8 @@ class Yahoo implements IScraper
                 $this->messages[$this->attempt] = $e->getMessage();
                 sleep(25);
                 set_time_limit(30);
-            } finally {
+            }
+            finally {
                 print_r($this->messages);
             }
         }
@@ -57,7 +60,9 @@ class Yahoo implements IScraper
         $data = $this->extractData($fileContents);
         $price = $this->getPrice($fileContents);
 
-        return $this->formatData(array_merge($data, $price));
+        return $this->stockData = $this->formatData(array_merge($data, $price));
+
+//        return $this->formatData(array_merge($data, $price));
     }
 
     private function extractData($pageContents)
@@ -84,13 +89,20 @@ class Yahoo implements IScraper
     private function downloadPage() : string
     {
         $page = self::URL . $this->ticker;
-        $fileContents = file_get_contents($page);
+        $this->fileContents = file_get_contents($page);
 
-        return $fileContents;
+        return $this->fileContents;
     }
 
     private function getTableFromSite(string $pageContent) : string
     {
+        /*
+         * quick fix - if earnings are set as range, they are presented as:
+         * <span data-reactid="103">Oct 28, 2019</span><!-- react-text: 104 --> - <!-- /react-text --><span data-reactid="105">Nov 1, 2019</span>
+         * so I want this </span><!-- react-text: 104 --> - <!-- /react-text --><span data-reactid="105"> to be replaced by this " - "
+         */
+        $pageContent = str_replace('</span><!-- react-text: 104 --> - <!-- /react-text --><span data-reactid="105">', "-", $pageContent);
+
         /*
          * summary is made on two tables
          */
@@ -98,6 +110,7 @@ class Yahoo implements IScraper
         $table1 = explode('<table', $pageContent);
 
         $table1 = explode('</table', $table1[1])[0];
+
         $table2 = explode('</table', explode('<table', $pageContent)[2])[0];
 
         return $table1 . $table2;
@@ -110,6 +123,7 @@ class Yahoo implements IScraper
 
     private function describeDataInRows(array $rows) : array
     {
+
         /*
          * first row has tbody styles and classes
          */
@@ -155,7 +169,6 @@ class Yahoo implements IScraper
 
     private function formatData(array $input) : array
     {
-
         $input['Market Cap'] = $this->convertToFloat($input['Market Cap']);
         $input['Ex-Dividend Date'] = Carbon::create($input['Ex-Dividend Date']);
 
@@ -216,6 +229,19 @@ class Yahoo implements IScraper
             set_time_limit(30);
             $this->getData();
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getStockData()
+    {
+        return $this->stockData;
+    }
+
+    public function getPageContents()
+    {
+        return $this->fileContents;
     }
 
 }
