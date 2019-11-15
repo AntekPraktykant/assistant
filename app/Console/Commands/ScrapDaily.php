@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Helpers\Scrapers\Yahoo;
 use App\Skrocona;
 use App\YahooDaily;
-use App\YahooPages;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -115,15 +114,15 @@ class ScrapDaily extends Command
             $yahooDaily->save();
         }
 
-        $yahooPages = new YahooPages();
-        $yahooPages->date = $today;
-        $yahooPages->ticker = $ticker;
-        $yahooPages->page_contents = $yahoo->getPageContents();
-
-        if ($yahooPages->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
-            print_r('Saving page ' . $ticker . ": $yahooPages->ticker" . PHP_EOL);
-            $yahooPages->save();
-        }
+//        $yahooPages = new YahooPages();
+//        $yahooPages->date = $today;
+//        $yahooPages->ticker = $ticker;
+//        $yahooPages->page_contents = $yahoo->getPageContents();
+//
+//        if ($yahooPages->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
+//            print_r('Saving page ' . $ticker . ": $yahooPages->ticker" . PHP_EOL);
+//            $yahooPages->save();
+//        }
 
         print_r(PHP_EOL . '==================================' . $ticker . ' complete =================================' . PHP_EOL);
     }
