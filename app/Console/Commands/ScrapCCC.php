@@ -65,6 +65,7 @@ class ScrapCCC extends Command
         $skrocona->DebtEquity = $stock['Debt/ Equity'];
         $skrocona->DivGrowth5y = $stock['Past 5yr Growth'];
         $skrocona->YearlyDividend = $stock['Annualized'];
+        $skrocona->payouts = $stock['Payouts/ Year'];
 
         if ($skrocona->where('date', $stock['Date'])->where('Ticker', $stock['Ticker Symbol'])->get()->isEmpty()) {
             $skrocona->save();
