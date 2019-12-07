@@ -56,11 +56,12 @@ class Yahoo implements IScraper
         print_r('Scraping ' . $this->ticker . PHP_EOL);
 
         $fileContents = $this->downloadPage();
+        $earningsSurprise = $this->getEarningsSurprise();
 
         $data = $this->extractData($fileContents);
         $price = $this->getPrice($fileContents);
 
-        return $this->stockData = $this->formatData(array_merge($data, $price));
+        return $this->stockData = $this->formatData(array_merge($data, $price, $earningsSurprise));
 
 //        return $this->formatData(array_merge($data, $price));
     }
@@ -242,6 +243,16 @@ class Yahoo implements IScraper
     public function getPageContents()
     {
         return $this->fileContents;
+    }
+
+    private function getEarningsSurprise()
+    {
+        $earningsSurpriseData = explode('earningsChart', $this->fileContents)[2];
+        $earningsSurpriseData = explode('financialsChart', $earningsSurpriseData)[0];
+        $earningsSurpriseData = ltrim($earningsSurpriseData, '":');
+        $earningsSurpriseData = rtrim($earningsSurpriseData, ',"');
+
+        dd( json_decode($earningsSurpriseData));
     }
 
 }
