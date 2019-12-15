@@ -4,12 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MarketCap extends Model
+class YahooPages extends Model
 {
     const CREATED_AT = null;
     const UPDATED_AT = null;
 
-    protected $table = 'market_cap';
     protected $primaryKey = ['date', 'ticker'];
+    protected $table = 'yahoo_pages';
     public $incrementing = false;
 }

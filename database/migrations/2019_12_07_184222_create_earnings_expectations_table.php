@@ -16,7 +16,7 @@ class CreateEarningsExpectationsTable extends Migration
         Schema::create('earnings_expectations', function (Blueprint $table) {
             $table->string('symbol');
             $table->string('quarter');
-            $table->float('expectations');
+            $table->float('expectations')->nullable();
             $table->date('created_at');
 
             $table->primary(['symbol', 'quarter', 'created_at']);

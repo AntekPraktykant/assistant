@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Scrapers\Yahoo;
+use App\EarningsExpectation;
+use App\EarningsSurprise;
+use App\Helpers\Scrapers\YahooScrapper;
 use App\Skrocona;
 use App\YahooDaily;
 use Carbon\Carbon;
@@ -17,7 +19,7 @@ class ScrapDaily extends Command
      *
      * @var string
      */
-    protected $signature = 'scrap:daily';
+    protected $signature = 'scrap:daily {ticker=A}';
 
     /**
      * The console command description.
@@ -41,8 +43,9 @@ class ScrapDaily extends Command
      *
      * @return mixed
      */
-    public function handle($sleep = 0.5, $first = 'A')
+    public function handle($sleep = 0.5)
     {
+        $first = $this->argument('ticker') ?? 'A';
         $last = skrocona::max('date');
         $allStocks = Skrocona::where('date', '=', $last)->pluck('TICKER')->toArray();
         $noOfScraps = count($allStocks);
@@ -61,12 +64,12 @@ class ScrapDaily extends Command
 //                break;
 //            }
             if ($execute) {
-                if ($sleep > 0 ) {
+                if ($sleep > 0) {
                     sleep($sleep);
                     set_time_limit(30);
                 }
                 print_r(PHP_EOL . '----------------------------------' . $stock . ' -----------------------------------------' . PHP_EOL);
-                $yahoo = new Yahoo($stock);
+                $yahoo = new YahooScrapper($stock);
 
                 try {
                     $stockData = $yahoo->getData();
@@ -76,7 +79,7 @@ class ScrapDaily extends Command
                     $this->handle(0.5, $stock);
                 }
 
-                $this->saveToDb($yahoo, $stock);
+                $this->saveToDb($yahoo->getStockData(), $stock);
             }
         }
 
@@ -84,35 +87,73 @@ class ScrapDaily extends Command
         print_r($statuses);
     }
 
-    private function saveToDb($yahoo, $ticker)
+    private function saveToDb($stockData, $ticker)
     {
-        $values = $yahoo->getStockData();
         $today = Carbon::today('America/New_York');
-
         $yahooDaily = new YahooDaily();
 
         $yahooDaily->date = $today;
         $yahooDaily->ticker = $ticker;
-        $yahooDaily->beta = $values['Beta 3Y Monthly'];
-        $yahooDaily->earnings_1 = $values['Earnings Date 1'];
-        $yahooDaily->earnings_2 = $values['Earnings Date 2'];
-        $yahooDaily->ex_date = $values['Ex-Dividend Date'];
-        $yahooDaily->mktcap = $values['Market Cap'];
-        $yahooDaily->pe = $values['PE Ratio TTM'];
-        $yahooDaily->close = $values['Last price'];
-        $yahooDaily->day_min = $values["Day's Range 1"];
-        $yahooDaily->day_max = $values["Day's Range 2"];
-        $yahooDaily->year_min = $values["52 Week Range 1"];
-        $yahooDaily->year_max = $values["52 Week Range 2"];
-        $yahooDaily->eps_ttm = $values["EPS TTM"];
-        $yahooDaily->analyst_1y_price_est = $values["1y Target Est"];
-        $yahooDaily->forward_dividend = $values["Forward Dividend"];
-        $yahooDaily->yield = empty($x= str_replace('%', '', $values["Yield"])) ? null : $x;
+        /*
+         * change on 2019-12-13 Beta 3Y Monthly => Beta 5Y Monthly (yahoo change)
+         */
+        $yahooDaily->beta = $stockData['Beta 5Y Monthly'];
+        $yahooDaily->earnings_1 = $stockData['Earnings Date 1'];
+        $yahooDaily->earnings_2 = $stockData['Earnings Date 2'];
+        $yahooDaily->ex_date = $stockData['Ex-Dividend Date'];
+        $yahooDaily->mktcap = $stockData['Market Cap'];
+        $yahooDaily->pe = $stockData['PE Ratio TTM'];
+        $yahooDaily->close = $stockData['Last price'];
+        $yahooDaily->day_min = $stockData["Day's Range 1"];
+        $yahooDaily->day_max = $stockData["Day's Range 2"];
+        $yahooDaily->year_min = $stockData["52 Week Range 1"];
+        $yahooDaily->year_max = $stockData["52 Week Range 2"];
+        $yahooDaily->eps_ttm = $stockData["EPS TTM"];
+        $yahooDaily->analyst_1y_price_est = $stockData["1y Target Est"];
+        $yahooDaily->forward_dividend = $stockData["Forward Dividend"];
+        $yahooDaily->yield = empty($x = str_replace('%', '', $stockData["Yield"])) ? null : $x;
 
         if ($yahooDaily->where('date', $today->toDateString())->where('ticker', $ticker)->get()->isEmpty()) {
             print_r('Saving exdd ' . $ticker . ": $yahooDaily->ex_date" . PHP_EOL);
             $yahooDaily->save();
         }
+//        dd($stockData['earnings_surprise']->quarterly);
+
+        if (isset($stockData['earnings_surprise'])) {
+            $earnings = $stockData['earnings_surprise'];
+            foreach ($quarterly = $earnings->quarterly as $quarter) {
+                $earningsSurprise = new EarningsSurprise();
+                $earningsSurprise->symbol = $ticker;
+                $earningsSurprise->quarter = $quarter->date;
+                $earningsSurprise->actual = $quarter->actual->fmt;
+                $earningsSurprise->estimate = $quarter->estimate->fmt;
+
+                if ($earningsSurprise->where([['symbol', '=', $ticker], ['quarter', '=', $earningsSurprise->quarter]])->get()->isEmpty()) {
+                    $earningsSurprise->save();
+                }
+            }
+
+            if (isset($earnings->currentQuarterEstimateDate)) {
+                $earningsExpectations = new EarningsExpectation();
+
+                $earningsExpectations->symbol = $ticker;
+                $earningsExpectations->quarter = $earnings->currentQuarterEstimateDate . $earnings->currentQuarterEstimateYear;
+                $earningsExpectations->expectations = $earnings->currentQuarterEstimate->fmt ?? null;
+
+                if ($earningsExpectations->where([
+                    ['symbol', '=', $ticker],
+                    ['quarter', '=', $earningsExpectations->quarter],
+                    ['created_at', '=', $today]
+                ])->get()->isEmpty()) {
+                    $earningsExpectations->save();
+                }
+            }
+        }
+
+
+
+//        die();
+
 
 //        $yahooPages = new YahooPages();
 //        $yahooPages->date = $today;

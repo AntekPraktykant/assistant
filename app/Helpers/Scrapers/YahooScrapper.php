@@ -2,10 +2,11 @@
 
 namespace App\Helpers\Scrapers;
 
+use App\Helpers\Scrapers\DTO\YahooScraperDTO;
 use Exception;
 use Carbon\Carbon;
 
-class Yahoo implements IScraper
+class YahooScrapper implements IScraper
 {
     private const URL = 'https://finance.yahoo.com/quote/';
 
@@ -15,11 +16,13 @@ class Yahoo implements IScraper
     private $messages = [];
     private $fileContents = null;
     private $stockData = null;
+    private $dto;
 
     public function __construct(string $ticker, $maxAttempts = 5)
     {
         $this->ticker = $ticker;
         $this->maxAttempts = $maxAttempts;
+        $this->dto = new YahooScraperDTO();
     }
 
     /**
@@ -46,6 +49,11 @@ class Yahoo implements IScraper
         return $result;
     }
 
+    private function saveToDto()
+    {
+//        $this->dto->setEarningsSurprise($this->)
+    }
+
     public function getMessages() : array
     {
         return $this->messages;
@@ -57,6 +65,7 @@ class Yahoo implements IScraper
 
         $fileContents = $this->downloadPage();
         $earningsSurprise = $this->getEarningsSurprise();
+//        $this->dto->setEarningsSurprise($earningsSurprise);
 
         $data = $this->extractData($fileContents);
         $price = $this->getPrice($fileContents);
@@ -233,7 +242,7 @@ class Yahoo implements IScraper
     }
 
     /**
-     * @return int
+     * @return array
      */
     public function getStockData()
     {
@@ -245,14 +254,18 @@ class Yahoo implements IScraper
         return $this->fileContents;
     }
 
-    private function getEarningsSurprise()
+    private function getEarningsSurprise() : array
     {
-        $earningsSurpriseData = explode('earningsChart', $this->fileContents)[2];
+        $earningsSurpriseData = explode('earningsChart', $this->fileContents);
+        if (! isset($earningsSurpriseData[2])) {
+            return [];
+        }
+        $earningsSurpriseData = $earningsSurpriseData[2];
         $earningsSurpriseData = explode('financialsChart', $earningsSurpriseData)[0];
         $earningsSurpriseData = ltrim($earningsSurpriseData, '":');
         $earningsSurpriseData = rtrim($earningsSurpriseData, ',"');
 
-        dd( json_decode($earningsSurpriseData));
+        return ['earnings_surprise' => json_decode($earningsSurpriseData)];
     }
 
 }

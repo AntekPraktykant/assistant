@@ -17,7 +17,7 @@ class CreateEarningsSurprisesTable extends Migration
             $table->string('symbol');
             $table->string('quarter');
             $table->float('actual');
-            $table->float('estimate');
+            $table->float('estimate')->nullable();
 
             $table->primary(['symbol', 'quarter']);
         });
