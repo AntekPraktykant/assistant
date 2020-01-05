@@ -117,7 +117,6 @@ class ScrapDaily extends Command
             print_r('Saving exdd ' . $ticker . ": $yahooDaily->ex_date" . PHP_EOL);
             $yahooDaily->save();
         }
-//        dd($stockData['earnings_surprise']->quarterly);
 
         if (isset($stockData['earnings_surprise'])) {
             $earnings = $stockData['earnings_surprise'];
@@ -125,7 +124,13 @@ class ScrapDaily extends Command
                 $earningsSurprise = new EarningsSurprise();
                 $earningsSurprise->symbol = $ticker;
                 $earningsSurprise->quarter = $quarter->date;
+                if(! isset($quarter->actual->fmt)) {
+                    continue;
+                }
                 $earningsSurprise->actual = $quarter->actual->fmt;
+                if(! isset($quarter->estimate->fmt)) {
+                    continue;
+                }
                 $earningsSurprise->estimate = $quarter->estimate->fmt;
 
                 if ($earningsSurprise->where([['symbol', '=', $ticker], ['quarter', '=', $earningsSurprise->quarter]])->get()->isEmpty()) {
@@ -149,8 +154,6 @@ class ScrapDaily extends Command
                 }
             }
         }
-
-
 
 //        die();
 
